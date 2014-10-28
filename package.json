@@ -1,0 +1,13 @@
+{
+	name: "js-rich-marker",
+	version: "3.1.0",
+	description: "A library for using arbitrary DOM elements as map markers in the Google Maps JavaScript API v3.",
+	main: "src/richmarker.js",
+	repository: {
+		type: "git",
+		url: "git://github.com/spothero/js-rich-marker.git"
+	},
+	author: "SpotHero",
+	license: "MIT",
+	readmeFilename: "README.md"
+}
