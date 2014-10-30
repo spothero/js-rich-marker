@@ -20,8 +20,6 @@
  * limitations under the License.
  */
 
-var google = require('google');
-
 // module export
 module.exports = function() {
 
