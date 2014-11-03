@@ -4,6 +4,12 @@
  *
  */
 /**
+// ==ClosureCompiler==
+// @compilation_level ADVANCED_OPTIMIZATIONS
+// @externs_url http://closure-compiler.googlecode.com/svn/trunk/contrib/externs/maps/google_maps_api_v3.js
+// @output_wrapper (function() {%output%})();
+// ==/ClosureCompiler==
+/**
  * @license
  * Copyright 2013 Google Inc. All Rights Reserved.
  *
@@ -19,7 +25,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * A RichMarker that allows any HTML/DOM to be added to a map and be draggable.
  *
@@ -42,15 +47,15 @@ function RichMarker(opt_options) {
      */
     this.dragging_ = false;
 
-    if (opt_options['visible'] === undefined) {
+    if (opt_options['visible'] == undefined) {
         opt_options['visible'] = true;
     }
 
-    if (opt_options['shadow'] === undefined) {
+    if (opt_options['shadow'] == undefined) {
         opt_options['shadow'] = '7px -3px 5px rgba(88,88,88,0.7)';
     }
 
-    if (opt_options['anchor'] === undefined) {
+    if (opt_options['anchor'] == undefined) {
         opt_options['anchor'] = RichMarkerPosition['BOTTOM'];
     }
 
@@ -320,7 +325,7 @@ RichMarker.prototype['anchor_changed'] = RichMarker.prototype.anchor_changed;
 RichMarker.prototype.htmlToDocumentFragment_ = function(htmlString) {
     var tempDiv = document.createElement('DIV');
     tempDiv.innerHTML = htmlString;
-    if (tempDiv.childNodes.length === 1) {
+    if (tempDiv.childNodes.length == 1) {
         return /** @type {!Node} */ (tempDiv.removeChild(tempDiv.firstChild));
     } else {
         var fragment = document.createDocumentFragment();
@@ -344,7 +349,7 @@ RichMarker.prototype.removeChildren_ = function(node) {
     }
 
     var child;
-    while (child === node.firstChild) {
+    while (child = node.firstChild) {
         node.removeChild(child);
     }
 };
@@ -384,40 +389,34 @@ RichMarker.prototype.content_changed = function() {
     this.removeChildren_(this.markerContent_);
     var content = this.getContent();
     if (content) {
-        if (typeof content === 'string') {
+        if (typeof content == 'string') {
             content = content.replace(/^\s*([\S\s]*)\b\s*$/, '$1');
             content = this.htmlToDocumentFragment_(content);
         }
         this.markerContent_.appendChild(content);
 
         var that = this;
-        var imageOnMouseDown = function(e) {
-            if (that.getDraggable()) {
-                if (e.preventDefault) {
-                    e.preventDefault();
-                }
-                e.returnValue = false;
-            }
-        };
-        var imageOnload = function(e) {
-            that.draw();
-        };
         var images = this.markerContent_.getElementsByTagName('IMG');
-        for (var i = 0; i < images[i]; i++) {
-            var image = images[i];
+        for (var i = 0, image; image = images[i]; i++) {
             // By default, a browser lets a image be dragged outside of the browser,
             // so by calling preventDefault we stop this behaviour and allow the image
             // to be dragged around the map and now out of the browser and onto the
             // desktop.
-
-
-
-            google.maps.event.addDomListener(image, 'mousedown', onMouseDown);
+            google.maps.event.addDomListener(image, 'mousedown', function(e) {
+                if (that.getDraggable()) {
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    }
+                    e.returnValue = false;
+                }
+            });
 
             // Because we don't know the size of an image till it loads, add a
             // listener to the image load so the marker can resize and reposition
             // itself to be the correct height.
-            google.maps.event.addDomListener(image, 'load', imageOnload);
+            google.maps.event.addDomListener(image, 'load', function() {
+                that.draw();
+            });
         }
 
         google.maps.event.trigger(this, 'domready');
@@ -427,7 +426,6 @@ RichMarker.prototype.content_changed = function() {
         this.draw();
     }
 };
-
 RichMarker.prototype['content_changed'] = RichMarker.prototype.content_changed;
 
 /**
@@ -444,28 +442,28 @@ RichMarker.prototype.setCursor_ = function(whichCursor) {
     var cursor = '';
     if (navigator.userAgent.indexOf('Gecko/') !== -1) {
         // Moz has some nice cursors :)
-        if (whichCursor === 'dragging') {
+        if (whichCursor == 'dragging') {
             cursor = '-moz-grabbing';
         }
 
-        if (whichCursor === 'dragready') {
+        if (whichCursor == 'dragready') {
             cursor = '-moz-grab';
         }
 
-        if (whichCursor === 'draggable') {
+        if (whichCursor == 'draggable') {
             cursor = 'pointer';
         }
     } else {
-        if (whichCursor === 'dragging' || whichCursor === 'dragready') {
+        if (whichCursor == 'dragging' || whichCursor == 'dragready') {
             cursor = 'move';
         }
 
-        if (whichCursor === 'draggable') {
+        if (whichCursor == 'draggable') {
             cursor = 'pointer';
         }
     }
 
-    if (this.markerWrapper_.style.cursor !== cursor) {
+    if (this.markerWrapper_.style.cursor != cursor) {
         this.markerWrapper_.style.cursor = cursor;
     }
 };
@@ -648,8 +646,7 @@ RichMarker.prototype.addDraggingListeners_ = function() {
  */
 RichMarker.prototype.removeDraggingListeners_ = function() {
     if (this.draggingListeners_) {
-        for (var i = 0; i < this.draggingListeners_; i++) {
-            var listener = this.draggingListeners_[i];
+        for (var i = 0, listener; listener = this.draggingListeners_[i]; i++) {
             google.maps.event.removeListener(listener);
         }
         this.draggingListeners_.length = 0;
@@ -665,7 +662,7 @@ RichMarker.prototype.removeDraggingListeners_ = function() {
  */
 RichMarker.prototype.getOffset_ = function() {
     var anchor = this.getAnchor();
-    if (typeof anchor === 'object') {
+    if (typeof anchor == 'object') {
         return /** @type {google.maps.Size} */ (anchor);
     }
 
@@ -786,11 +783,11 @@ RichMarker.prototype.draw = function() {
     var height = this.markerContent_.offsetHeight;
     var width = this.markerContent_.offsetWidth;
 
-    if (width !== this.get('width')) {
+    if (width != this.get('width')) {
         this.set('width', width);
     }
 
-    if (height !== this.get('height')) {
+    if (height != this.get('height')) {
         this.set('height', height);
     }
 };
